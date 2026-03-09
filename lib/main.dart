@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'features/auth/presentation/screens/splash_screen.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/signup_screen.dart';
 import 'features/auth/presentation/screens/forgot_password_screen.dart';
@@ -14,8 +15,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: "/login",
+      initialRoute: "/splash",
       getPages: [
+        GetPage(
+          name: "/splash",
+          page: () => const SplashScreen(),
+        ),
         GetPage(
           name: "/login",
           page: () => const LoginScreen(),

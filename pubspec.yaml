@@ -1,7 +1,6 @@
-
 name: flutter_products_app
 description: Sample Flutter app using GetX and Dio with feature-first architecture
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
