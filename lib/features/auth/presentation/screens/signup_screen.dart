@@ -2,24 +2,51 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   final AuthController controller = Get.put(AuthController());
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   final RxBool hidePassword = true.obs;
+  final RxBool hideConfirmPassword = true.obs;
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  void _validateAndSignup() {
+    if (emailController.text.isEmpty) {
+      Get.snackbar("Error", "Please enter your email");
+      return;
+    }
+    if (passwordController.text.isEmpty) {
+      Get.snackbar("Error", "Please enter a password");
+      return;
+    }
+    if (passwordController.text.length < 6) {
+      Get.snackbar("Error", "Password must be at least 6 characters");
+      return;
+    }
+    if (passwordController.text != confirmPasswordController.text) {
+      Get.snackbar("Error", "Passwords do not match");
+      return;
+    }
+
+    controller.signup(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+    );
   }
 
   @override
@@ -48,7 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   /// Header
                   const Text(
-                    "Welcome Back!",
+                    "Create an\naccount",
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -118,27 +146,47 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       )),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
 
-                  /// Forgot Password Link
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Get.toNamed("/forgot-password");
-                      },
-                      child: const Text(
-                        "Forgot password?",
-                        style: TextStyle(
-                          color: Color(0xFFFF4081),
-                          fontWeight: FontWeight.w500,
+                  /// Confirm Password Field
+                  Obx(() => TextField(
+                        controller: confirmPasswordController,
+                        obscureText: hideConfirmPassword.value,
+                        decoration: InputDecoration(
+                          hintText: "Confirm Password",
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              hideConfirmPassword.value
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              hideConfirmPassword.value =
+                                  !hideConfirmPassword.value;
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE0E0E0),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE0E0E0),
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 16,
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
+                      )),
+                  const SizedBox(height: 32),
 
-                  /// Login Button
+                  /// Create Account Button
                   Obx(() {
                     return SizedBox(
                       width: double.infinity,
@@ -153,12 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         onPressed: controller.isLoading.value
                             ? null
-                            : () {
-                                controller.login(
-                                  emailController.text.trim(),
-                                  passwordController.text.trim(),
-                                );
-                              },
+                            : _validateAndSignup,
                         child: controller.isLoading.value
                             ? const SizedBox(
                                 height: 24,
@@ -169,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               )
                             : const Text(
-                                "Login",
+                                "Create Account",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -181,22 +224,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   }),
                   const SizedBox(height: 20),
 
-                  /// Sign Up Link
+                  /// Login Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        "Don't have an account? ",
+                        "I Already Have an Account ",
                         style: TextStyle(
                           color: Colors.grey,
                         ),
                       ),
                       TextButton(
                         onPressed: () {
-                          Get.toNamed("/signup");
+                          Get.offAllNamed("/login");
                         },
                         child: const Text(
-                          "Sign Up",
+                          "Login",
                           style: TextStyle(
                             color: Color(0xFFFF4081),
                             fontWeight: FontWeight.w600,
