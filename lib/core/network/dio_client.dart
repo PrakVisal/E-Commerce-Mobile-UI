@@ -2,34 +2,57 @@ import 'package:dio/dio.dart';
 import '../storage/token_storage.dart';
 
 class DioClient {
+  static Dio? _dio;
 
-  static final Dio dio = Dio(
-    BaseOptions(
-      baseUrl: "http://spring.sikeat.me:8081",
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-    ),
-  )..interceptors.add(
-    InterceptorsWrapper(
-      onRequest: (options, handler) async {
+  static Dio get dio {
+    _dio ??= Dio(
+      BaseOptions(
+        baseUrl:
+            "http://152.42.176.150:8081", // Using IP address instead of domain
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        validateStatus: (status) {
+          return status != null && status < 500;
+        },
+      ),
+    )..interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) async {
+            final token = await TokenStorage.getToken();
+            if (token != null) {
+              options.headers["Authorization"] = "Bearer $token";
+            }
 
-        final token = await TokenStorage.getToken();
+            print('🌐 Request: ${options.method} ${options.uri}');
+            print('📋 Headers: ${options.headers}');
+            print('📦 Data: ${options.data}');
 
-        if (token != null) {
-          options.headers["Authorization"] = "Bearer $token";
-        }
+            return handler.next(options);
+          },
+          onResponse: (response, handler) {
+            print('✅ Response: ${response.statusCode}');
+            print('📄 Response data: ${response.data}');
+            return handler.next(response);
+          },
+          onError: (error, handler) async {
+            print('❌ Error: ${error.message}');
+            print('🔍 Error type: ${error.type}');
+            print('📄 Error response: ${error.response?.data}');
 
-        return handler.next(options);
-      },
+            if (error.response?.statusCode == 401) {
+              await TokenStorage.clearToken();
+            }
 
-      onError: (error, handler) async {
+            return handler.next(error);
+          },
+        ),
+      );
 
-        if (error.response?.statusCode == 401) {
-          await TokenStorage.clearToken();
-        }
-
-        return handler.next(error);
-      },
-    ),
-  );
+    return _dio!;
+  }
 }
