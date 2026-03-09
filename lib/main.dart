@@ -4,6 +4,7 @@ import 'features/auth/presentation/screens/splash_screen.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/signup_screen.dart';
 import 'features/auth/presentation/screens/forgot_password_screen.dart';
+import 'features/auth/presentation/screens/get_started_screen.dart';
 import 'features/products/presentation/screens/products_screen.dart';
 
 void main() {
@@ -32,6 +33,10 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: "/forgot-password",
           page: () => const ForgotPasswordScreen(),
+        ),
+        GetPage(
+          name: "/get-started",
+          page: () => const GetStartedScreen(),
         ),
         GetPage(
           name: "/products",

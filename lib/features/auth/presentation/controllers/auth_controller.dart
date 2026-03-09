@@ -18,7 +18,7 @@ class AuthController extends GetxController {
 
       isLoggedIn.value = true;
 
-      Get.offAllNamed("/products");
+      Get.offAllNamed("/get-started");
     } catch (e) {
       Get.snackbar(
         "Login Failed",
@@ -39,7 +39,7 @@ class AuthController extends GetxController {
 
       isLoggedIn.value = true;
 
-      Get.offAllNamed("/products");
+      Get.offAllNamed("/get-started");
     } catch (e) {
       Get.snackbar(
         "Signup Failed",
