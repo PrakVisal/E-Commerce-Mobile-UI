@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/product_controller.dart';
@@ -171,7 +170,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
               onTap: () => controller.selectCategory(category),
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   gradient: controller.selectedCategory.value == category
                       ? const LinearGradient(
@@ -251,8 +251,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             children: [
               PopupMenuButton(
                 onSelected: controller.selectSort,
-                itemBuilder: (context) =>
-                    controller.sortOptions.map((option) {
+                itemBuilder: (context) => controller.sortOptions.map((option) {
                   return PopupMenuItem(
                     value: option,
                     child: Text(option),
@@ -306,7 +305,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
-          const Text("Price Range", style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text("Price Range",
+              style: TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -381,7 +381,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(20),
@@ -494,7 +495,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed("/trending");
+                },
                 child: const Text(
                   "View all",
                   style: TextStyle(
@@ -589,7 +592,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.orange.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(12),
@@ -618,7 +622,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
               shape: BoxShape.circle,
               color: Colors.orange.withOpacity(0.2),
             ),
-            child: const Icon(Icons.local_offer, color: Colors.orange, size: 30),
+            child:
+                const Icon(Icons.local_offer, color: Colors.orange, size: 30),
           ),
         ],
       ),
@@ -663,7 +668,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 ),
                 child: const Text(
                   "Sale",
-                  style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -746,7 +754,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 ),
                 child: const Text(
                   "Sale",
-                  style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -790,7 +801,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       if (product.rating != null)
                         Row(
                           children: [
-                            const Icon(Icons.star, size: 12, color: Colors.orange),
+                            const Icon(Icons.star,
+                                size: 12, color: Colors.orange),
                             Text(
                               "${product.rating}",
                               style: const TextStyle(fontSize: 10),
@@ -842,4 +854,3 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 }
-

@@ -1,11 +1,9 @@
-
 import 'package:get/get.dart';
 import '../../data/models/product_model.dart';
 import '../../data/services/product_service.dart';
 import '../../../../core/storage/token_storage.dart';
 
 class ProductController extends GetxController {
-
   final ProductService _service = ProductService();
 
   var isLoading = true.obs;
@@ -13,13 +11,18 @@ class ProductController extends GetxController {
   var products = <Product>[].obs;
   var filteredProducts = <Product>[].obs;
   var errorMessage = "".obs;
-  
+
   var selectedCategory = "All".obs;
   var selectedSort = "Popular".obs;
   var searchQuery = "".obs;
 
   final categories = ["All", "Beauty", "Fashion", "Kids", "Mens", "Womens"];
-  final sortOptions = ["Popular", "Price: Low to High", "Price: High to Low", "Newest"];
+  final sortOptions = [
+    "Popular",
+    "Price: Low to High",
+    "Price: High to Low",
+    "Newest"
+  ];
 
   @override
   void onInit() {
@@ -34,9 +37,8 @@ class ProductController extends GetxController {
 
       final result = await _service.fetchProducts();
       products.assignAll(result);
-      
+
       applyFilters();
-      
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();
@@ -103,16 +105,16 @@ class ProductController extends GetxController {
   List<Product> getFeaturedProducts() =>
       filteredProducts.where((p) => p.onPromotion).toList().take(6).toList();
 
-  List<Product> getTrendingProducts() =>
-      filteredProducts.take(3).toList();
+  List<Product> getTrendingProducts() => filteredProducts.take(3).toList();
 
-  List<Product> getNewArrivals() =>
-      products.take(4).toList();
+  /// Returns the full list of trending products, used by the dedicated
+  /// trending page when the user taps "View all".
+  List<Product> getAllTrendingProducts() => filteredProducts.toList();
+
+  List<Product> getNewArrivals() => products.take(4).toList();
 
   Future<void> logout() async {
     await TokenStorage.clearToken();
     Get.offAllNamed("/login");
   }
 }
-
-
