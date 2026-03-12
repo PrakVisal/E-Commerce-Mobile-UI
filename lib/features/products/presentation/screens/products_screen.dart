@@ -125,7 +125,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
             child: const Icon(Icons.person, color: Colors.red, size: 20),
           ),
           onPressed: () {
-            controller.logout();
+            // go to profile page
+            Get.toNamed("/profile");
           },
         ),
       ],

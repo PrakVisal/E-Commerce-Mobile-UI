@@ -7,6 +7,7 @@ import 'features/auth/presentation/screens/forgot_password_screen.dart';
 import 'features/auth/presentation/screens/get_started_screen.dart';
 import 'features/products/presentation/screens/products_screen.dart';
 import 'features/products/presentation/screens/trending_products_screen.dart';
+import 'features/auth/presentation/screens/profile_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -46,6 +47,10 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: "/trending",
           page: () => const TrendingProductsScreen(),
+        ),
+        GetPage(
+          name: "/profile",
+          page: () => const ProfileScreen(),
         ),
       ],
     );

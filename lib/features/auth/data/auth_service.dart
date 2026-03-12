@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import '../../../core/network/dio_client.dart';
+import 'models/user_model.dart';
 
 class AuthService {
   final Dio _dio = DioClient.dio;
@@ -49,6 +50,63 @@ class AuthService {
       return token;
     } catch (e) {
       print('Login error: $e');
+      rethrow;
+    }
+  }
+
+  /// Fetches the currently authenticated user's profile from the backend.
+  ///
+  /// The exact endpoint may need to be adjusted to match the server API
+  /// (commonly `/api/v1/auths/me` or `/api/v1/users/profile`). The method
+  /// handles both string and map payloads and attempts to locate the user
+  /// object in several common places: `payload.user`, `data.user`, or the
+  /// root of the response.
+  Future<User> getProfile() async {
+    try {
+      final response = await _dio.get('/api/v1/auths/profile');
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to fetch profile: ${response.statusCode}');
+      }
+
+      dynamic data = response.data;
+      if (data is String) {
+        data = jsonDecode(data);
+      }
+
+      // Navigate to where the user object is expected
+      Map<String, dynamic>? userJson;
+      if (data is Map<String, dynamic>) {
+        userJson = data['payload']?['user'] ??
+            data['data']?['user'] ??
+            data['user'] ??
+            data;
+      }
+
+      if (userJson == null) {
+        throw Exception('No user data found in profile response: $data');
+      }
+
+      return User.fromJson(userJson);
+    } catch (e) {
+      print('Profile fetch error: $e');
+      rethrow;
+    }
+  }
+
+  /// Updates the user's profile with the provided [user] object.
+  Future<void> updateProfile(User user) async {
+    try {
+      final response = await _dio.put(
+        '/api/v1/auths/me',
+        data: user.toJson(),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to update profile: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Profile update error: $e');
       rethrow;
     }
   }
