@@ -39,8 +39,10 @@ class User {
       city: json['city'],
       state: json['state'],
       country: json['country'],
-      bankAccountNumber: json['bankAccountNumber']?.toString() ?? json['bank_account_number']?.toString(),
-      accountHolderName: json['accountHolderName'] ?? json['account_holder_name'],
+      bankAccountNumber: json['bankAccountNumber']?.toString() ??
+          json['bank_account_number']?.toString(),
+      accountHolderName:
+          json['accountHolderName'] ?? json['account_holder_name'],
       ifscCode: json['ifscCode'] ?? json['ifsc_code'],
     );
   }

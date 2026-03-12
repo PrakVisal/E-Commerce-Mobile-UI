@@ -144,8 +144,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // use the auth controller to perform logout
                     authController.logout();
                   },
-                  child: const Text('Logout',
-                      style: TextStyle(color: Colors.red)),
+                  child:
+                      const Text('Logout', style: TextStyle(color: Colors.red)),
                 ),
               ),
             ],
@@ -194,7 +194,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       ),
     );
   }

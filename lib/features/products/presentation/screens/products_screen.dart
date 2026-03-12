@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/product_controller.dart';
 import '../../data/models/product_model.dart';
+import 'product_detail_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -471,7 +472,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             itemCount: featured.length,
             itemBuilder: (context, index) {
-              return _buildProductCard(featured[index], 140);
+              return GestureDetector(
+                onTap: () => Get.to(() => ProductDetailScreen(product: featured[index])),
+                child: _buildProductCard(featured[index], 140),
+              );
             },
           ),
         ),
@@ -567,7 +571,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             itemCount: newArrivals.length,
             itemBuilder: (context, index) {
-              return _buildProductCard(newArrivals[index], 140);
+              return GestureDetector(
+                onTap: () => Get.to(() => ProductDetailScreen(product: newArrivals[index])),
+                child: _buildProductCard(newArrivals[index], 140),
+              );
             },
           ),
         ),
@@ -720,18 +727,20 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   Widget _buildProductGridCard(Product product) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
+    return GestureDetector(
+      onTap: () => Get.to(() => ProductDetailScreen(product: product)),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.network(
@@ -818,7 +827,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildBottomNavigation() {

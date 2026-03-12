@@ -19,7 +19,8 @@ class AuthService {
       print('Login response data: ${response.data}');
       // Check if response is successful
       if (response.statusCode != 200 && response.statusCode != 201) {
-        throw Exception("Login failed with status ${response.statusCode}: ${response.data}");
+        throw Exception(
+            "Login failed with status ${response.statusCode}: ${response.data}");
       }
       dynamic data = response.data;
       if (data is String) {
@@ -130,7 +131,8 @@ class AuthService {
 
       // Check if response is successful
       if (response.statusCode != 200 && response.statusCode != 201) {
-        throw Exception("Signup failed with status ${response.statusCode}: ${response.data}");
+        throw Exception(
+            "Signup failed with status ${response.statusCode}: ${response.data}");
       }
 
       // Handle different response formats
