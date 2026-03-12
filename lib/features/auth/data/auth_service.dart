@@ -53,13 +53,17 @@ class AuthService {
     }
   }
 
-  Future<String> signup(String email, String password) async {
+  Future<void> signup(String email, String password, {String? fullName}) async {
     try {
       print('Attempting signup for: $email');
 
       final response = await _dio.post(
         "/api/v1/auths/register",
-        data: {"email": email, "password": password},
+        data: {
+          "email": email,
+          "password": password,
+          "fullName": fullName ?? email.split('@')[0],
+        },
       );
 
       print('Signup response status: ${response.statusCode}');
@@ -87,18 +91,12 @@ class AuthService {
         throw Exception("Response is not a valid JSON object: $data");
       }
 
-      final token = data["payload"]?["token"] ?? data["token"];
-
-      if (token == null) {
-        throw Exception("Token not found in response: $data");
+      // Check for success
+      if (data["success"] != true) {
+        throw Exception("Signup failed: ${data["message"] ?? data}");
       }
 
-      // Ensure token is a string
-      if (token is! String) {
-        throw Exception("Token is not a string: $token");
-      }
-
-      return token;
+      print('Signup successful for: $email');
     } catch (e) {
       print('Signup error: $e');
       rethrow;

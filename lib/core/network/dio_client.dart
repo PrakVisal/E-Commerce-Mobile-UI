@@ -22,10 +22,17 @@ class DioClient {
       ),
     )..interceptors.add(
         InterceptorsWrapper(
-          onRequest: (options, handler) async {
-            final token = await TokenStorage.getToken();
-            if (token != null) {
-              options.headers["Authorization"] = "Bearer $token";
+        onRequest: (options, handler) async {
+            // Skip authorization for auth endpoints
+            final isAuthEndpoint = options.path.contains('/auths/login') ||
+                                   options.path.contains('/auths/register') ||
+                                   options.path.contains('/auths/forgot-password');
+
+            if (!isAuthEndpoint) {
+              final token = await TokenStorage.getToken();
+              if (token != null) {
+                options.headers["Authorization"] = "Bearer $token";
+              }
             }
 
             print('🌐 Request: ${options.method} ${options.uri}');

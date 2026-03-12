@@ -33,13 +33,15 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
-      final token = await _authService.signup(email, password);
+      await _authService.signup(email, password);
 
-      await TokenStorage.saveToken(token);
+      Get.snackbar(
+        "Success",
+        "Account created successfully! Please login.",
+        snackPosition: SnackPosition.TOP,
+      );
 
-      isLoggedIn.value = true;
-
-      Get.offAllNamed("/get-started");
+      Get.offAllNamed("/login");
     } catch (e) {
       Get.snackbar(
         "Signup Failed",
