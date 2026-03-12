@@ -473,7 +473,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
             itemCount: featured.length,
             itemBuilder: (context, index) {
               return GestureDetector(
-                onTap: () => Get.to(() => ProductDetailScreen(product: featured[index])),
+                onTap: () =>
+                    Get.to(() => ProductDetailScreen(product: featured[index])),
                 child: _buildProductCard(featured[index], 140),
               );
             },
@@ -572,7 +573,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
             itemCount: newArrivals.length,
             itemBuilder: (context, index) {
               return GestureDetector(
-                onTap: () => Get.to(() => ProductDetailScreen(product: newArrivals[index])),
+                onTap: () => Get.to(
+                    () => ProductDetailScreen(product: newArrivals[index])),
                 child: _buildProductCard(newArrivals[index], 140),
               );
             },
@@ -728,106 +730,107 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   Widget _buildProductGridCard(Product product) {
     return GestureDetector(
-      onTap: () => Get.to(() => ProductDetailScreen(product: product)),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 12,
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-          ClipRRect(
+        onTap: () => Get.to(() => ProductDetailScreen(product: product)),
+        child: Container(
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              product.imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                color: Colors.grey[300],
-                child: const Icon(Icons.image_not_supported),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 12,
               ),
-            ),
+            ],
           ),
-          if (product.onPromotion)
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Text(
-                  "Sale",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image_not_supported),
+                  ),
                 ),
               ),
-            ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(12),
-                  bottomRight: Radius.circular(12),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
+              if (product.onPromotion)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      "Sale",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "\$${product.price.toStringAsFixed(2)}",
+                        product.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: Color(0xFFFF6B6B),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
                         ),
                       ),
-                      if (product.rating != null)
-                        Row(
-                          children: [
-                            const Icon(Icons.star,
-                                size: 12, color: Colors.orange),
-                            Text(
-                              "${product.rating}",
-                              style: const TextStyle(fontSize: 10),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "\$${product.price.toStringAsFixed(2)}",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Color(0xFFFF6B6B),
                             ),
-                          ],
-                        ),
+                          ),
+                          if (product.rating != null)
+                            Row(
+                              children: [
+                                const Icon(Icons.star,
+                                    size: 12, color: Colors.orange),
+                                Text(
+                                  "${product.rating}",
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 
   Widget _buildBottomNavigation() {

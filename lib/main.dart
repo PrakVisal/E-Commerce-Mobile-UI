@@ -8,6 +8,8 @@ import 'features/auth/presentation/screens/get_started_screen.dart';
 import 'features/products/presentation/screens/products_screen.dart';
 import 'features/products/presentation/screens/trending_products_screen.dart';
 import 'features/auth/presentation/screens/profile_screen.dart';
+import 'features/products/presentation/screens/product_detail_screen.dart';
+import 'features/products/presentation/screens/place_order_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -51,6 +53,14 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: "/profile",
           page: () => const ProfileScreen(),
+        ),
+        GetPage(
+          name: "/product-detail",
+          page: () => ProductDetailScreen(product: Get.arguments),
+        ),
+        GetPage(
+          name: "/place-order",
+          page: () => const PlaceOrderScreen(),
         ),
       ],
     );

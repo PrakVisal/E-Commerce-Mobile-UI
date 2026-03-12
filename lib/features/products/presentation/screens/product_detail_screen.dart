@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../data/models/cart_item_model.dart';
 import '../../data/models/product_model.dart';
+import '../controllers/cart_controller.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
-  const ProductDetailScreen({Key? key, required this.product}) : super(key: key);
+  const ProductDetailScreen({Key? key, required this.product})
+      : super(key: key);
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -22,9 +25,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     super.initState();
     // parse size options assuming comma-separated values
     _sizes = widget.product.sizeOptions
-            .split(RegExp(r'\s*,\s*'))
-            .where((s) => s.isNotEmpty)
-            .toList();
+        .split(RegExp(r'\s*,\s*'))
+        .where((s) => s.isNotEmpty)
+        .toList();
     if (_sizes.isNotEmpty) {
       _selectedSize = _sizes.first;
     }
@@ -89,7 +92,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: _currentImage == i ? Colors.white : Colors.white54,
+                            color: _currentImage == i
+                                ? Colors.white
+                                : Colors.white54,
                             shape: BoxShape.circle,
                           ),
                         );
@@ -104,7 +109,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'Size: ${_selectedSize ?? ""}',
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ),
             if (_sizes.isNotEmpty) ...[
@@ -149,7 +155,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 p.name,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 8),
@@ -195,9 +202,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '${((p.discount! / (p.price + p.discount!)) *
-                              100)
-                          .toStringAsFixed(0)}% Off',
+                      '${((p.discount! / (p.price + p.discount!)) * 100).toStringAsFixed(0)}% Off',
                       style: const TextStyle(
                           fontSize: 14,
                           color: Color(0xFFFF6B6B),
@@ -212,7 +217,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'Product Details',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
             const SizedBox(height: 8),
@@ -230,18 +236,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                        // go to cart
-                      },
-                      child: const Text('Go to cart'),
+                      onPressed: _addToCart,
+                      child: const Text('Add to Cart'),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // buy now
-                      },
+                      onPressed: _buyNow,
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00C853)),
                       child: const Text('Buy Now'),
@@ -275,5 +277,46 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       ),
     );
+  }
+
+  void _addToCart() {
+    if (_selectedSize == null) {
+      Get.snackbar('Error', 'Please select a size');
+      return;
+    }
+
+    final cartController = Get.isRegistered<CartController>()
+        ? Get.find<CartController>()
+        : Get.put(CartController());
+
+    final item = CartItem(
+      product: widget.product,
+      selectedSize: _selectedSize!,
+      quantity: 1,
+    );
+
+    cartController.addToCart(item);
+    Get.snackbar('Success', 'Added to cart',
+        snackPosition: SnackPosition.BOTTOM);
+  }
+
+  void _buyNow() {
+    if (_selectedSize == null) {
+      Get.snackbar('Error', 'Please select a size');
+      return;
+    }
+
+    final cartController = Get.isRegistered<CartController>()
+        ? Get.find<CartController>()
+        : Get.put(CartController());
+
+    final item = CartItem(
+      product: widget.product,
+      selectedSize: _selectedSize!,
+      quantity: 1,
+    );
+
+    cartController.addToCart(item);
+    Get.toNamed('/place-order');
   }
 }
