@@ -73,7 +73,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           IconButton(
             icon: const Icon(Icons.shopping_cart, color: Colors.black87),
             onPressed: () {
-              // navigate to cart if exists
+              Get.toNamed('/place-order');
             },
           )
         ],
@@ -308,9 +308,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       return;
     }
 
-    final cartController = Get.isRegistered<CartController>()
-        ? Get.find<CartController>()
-        : Get.put(CartController());
+    final cartController = Get.find<CartController>();
 
     final item = CartItem(
       product: widget.product,
@@ -329,9 +327,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       return;
     }
 
-    final cartController = Get.isRegistered<CartController>()
-        ? Get.find<CartController>()
-        : Get.put(CartController());
+    final cartController = Get.find<CartController>();
 
     final item = CartItem(
       product: widget.product,

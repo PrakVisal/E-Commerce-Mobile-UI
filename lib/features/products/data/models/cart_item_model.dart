@@ -24,4 +24,20 @@ class CartItem {
       quantity: quantity ?? this.quantity,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'product': product.toJson(),
+      'selectedSize': selectedSize,
+      'quantity': quantity,
+    };
+  }
+
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
+      product: Product.fromJson(json['product']),
+      selectedSize: json['selectedSize'] ?? '',
+      quantity: json['quantity'] ?? 1,
+    );
+  }
 }

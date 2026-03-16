@@ -150,16 +150,78 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               ),
               Divider(color: Colors.grey[200]),
 
-              /// Order Total
+              /// Order Summary
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
+                  key: const ValueKey('order_summary_column'),
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Text('Order Summary',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 16),
+                    Row(
+                      key: const ValueKey('subtotal_row'),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Subtotal',
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey[600])),
+                        Obx(() => Text(
+                            '₹${controller.subtotal.toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 14))),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      key: const ValueKey('delivery_fee_row'),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Delivery Fee',
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey[600])),
+                        Obx(() => Text(
+                            '₹${controller.deliveryFee.toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 14))),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      key: const ValueKey('convenience_fee_row'),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Convenience Fee',
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey[600])),
+                        Obx(() => Text(
+                            '₹${controller.convenienceFee.toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 14))),
+                      ],
+                    ),
+                    if (controller.appliedCouponDiscount.value > 0) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                              'Discount (${controller.appliedCouponCode.value})',
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.green)),
+                          Text(
+                              '-₹${controller.appliedCouponDiscount.value.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.green)),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    Divider(color: Colors.grey[300]),
+                    const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Order Total',
+                        const Text('Total',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w600)),
                         Text('₹${controller.total.toStringAsFixed(2)}',
@@ -199,7 +261,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Total',
+                            const Text('Total Amount',
                                 style: TextStyle(
                                     fontSize: 12, color: Colors.grey)),
                             const SizedBox(height: 4),
@@ -253,6 +315,18 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
   Widget _buildCartItem(CartItem item) {
     return Container(
       padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -260,12 +334,12 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             borderRadius: BorderRadius.circular(8),
             child: Image.network(
               item.product.imageUrl,
-              width: 100,
-              height: 100,
+              width: 80,
+              height: 80,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Container(
-                width: 100,
-                height: 100,
+                width: 80,
+                height: 80,
                 color: Colors.grey[300],
                 child: const Icon(Icons.image_not_supported),
               ),
@@ -276,12 +350,28 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  item.product.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w600),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.product.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      onPressed: () {
+                        controller.removeFromCart(item);
+                        Get.snackbar('Removed',
+                            '${item.product.name} removed from cart');
+                      },
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -293,52 +383,72 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 2),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Row(
-                        children: [
-                          const Text('Size',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.grey)),
-                          const SizedBox(width: 4),
-                          Text(item.selectedSize,
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w600)),
-                          const Icon(Icons.arrow_drop_down, size: 16),
-                        ],
-                      ),
+                    Text(
+                      'Size: ${item.selectedSize}',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
-                    const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 2),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Row(
-                        children: [
-                          const Text('Qty',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.grey)),
-                          const SizedBox(width: 4),
-                          Text(item.quantity.toString(),
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w600)),
-                          const Icon(Icons.arrow_drop_down, size: 16),
-                        ],
+                    const SizedBox(width: 16),
+                    Text(
+                      '\$${item.product.price.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFFF6B6B),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove, size: 20),
+                          onPressed: () {
+                            if (item.quantity > 1) {
+                              controller.updateQuantity(
+                                  item, item.quantity - 1);
+                            }
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            item.quantity.toString(),
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add, size: 20),
+                          onPressed: () {
+                            controller.updateQuantity(item, item.quantity + 1);
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      '\$${(item.product.price * item.quantity).toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
                 Text(
-                  'Delivery by ${DateTime.now().add(Duration(days: 5)).toString().split(' ')[0]}',
+                  'Delivery by ${DateTime.now().add(const Duration(days: 5)).toString().split(' ')[0]}',
                   style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
@@ -360,12 +470,76 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     );
   }
 
-  void _proceedToPayment() {
+  Future<void> _proceedToPayment() async {
+    if (controller.cartItems.isEmpty) {
+      Get.snackbar('Error', 'Your cart is empty',
+          snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+
+    // Create order data
+    final orderData = {
+      'orderId': 'ORD-${DateTime.now().millisecondsSinceEpoch}',
+      'items': controller.cartItems
+          .map((item) => {
+                'productId': item.product.id,
+                'productName': item.product.name,
+                'quantity': item.quantity,
+                'price': item.product.price,
+                'size': item.selectedSize,
+                'subtotal': item.subtotal,
+              })
+          .toList(),
+      'subtotal': controller.subtotal,
+      'deliveryFee': controller.deliveryFee,
+      'convenienceFee': controller.convenienceFee,
+      'discount': controller.appliedCouponDiscount.value,
+      'total': controller.total,
+      'orderDate': DateTime.now().toIso8601String(),
+      'status': 'confirmed',
+    };
+
+    print(
+        '💳 Processing payment for order with ${controller.cartItems.length} items');
+    print('💰 Payment total: ₹${controller.total.toStringAsFixed(2)}');
+
+    // Simulate payment processing delay
+    await Future.delayed(const Duration(seconds: 1));
+
+    print('✅ Payment processed successfully');
+
+    // Save order to local storage (simulate backend)
+    _saveOrderToStorage(orderData);
+
+    // Clear cart
+    controller.clearCart();
+
+    // Show success message
     Get.snackbar(
-      'Proceeding',
-      'Order total: ₹${controller.total.toStringAsFixed(2)}',
+      'Payment Successful! 🎉',
+      'Order ID: ${orderData['orderId']}\nTotal Paid: ₹${controller.total.toStringAsFixed(2)}',
       snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(seconds: 4),
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
     );
-    // navigate to payment screen later
+
+    // Navigate back to home
+    Get.offAllNamed('/products');
+  }
+
+  Future<void> _saveOrderToStorage(Map<String, dynamic> orderData) async {
+    try {
+      // You could save to SharedPreferences or a local database
+      // For now, just print the order (simulating backend save)
+      print('📦 Order saved: ${orderData['orderId']}');
+      print('💰 Total: ₹${orderData['total']}');
+      print('📦 Items: ${orderData['items'].length}');
+
+      // In a real app, you would send this to your backend API
+      // await orderService.createOrder(orderData);
+    } catch (e) {
+      print('❌ Error saving order: $e');
+    }
   }
 }

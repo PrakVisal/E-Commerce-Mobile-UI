@@ -13,11 +13,16 @@ import 'features/products/presentation/screens/product_detail_screen.dart';
 import 'features/products/presentation/screens/place_order_screen.dart';
 import 'features/products/presentation/screens/wishlist_screen.dart';
 
+import 'features/products/presentation/controllers/cart_controller.dart';
+
 void main() {
+  Get.put(CartController());
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

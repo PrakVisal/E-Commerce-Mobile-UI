@@ -1,4 +1,3 @@
-
 class Product {
   final int? id;
   final String name;
@@ -41,5 +40,20 @@ class Product {
       discount: json['discount'] != null ? (json['discount']).toDouble() : null,
     );
   }
-}
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'price': price,
+      'imageUrl': imageUrl,
+      'sizeOptions': sizeOptions,
+      'onPromotion': onPromotion,
+      'category': category,
+      'rating': rating,
+      'reviews': reviews,
+      'discount': discount,
+    };
+  }
+}
