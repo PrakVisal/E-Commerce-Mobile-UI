@@ -116,7 +116,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
     return AppBar(
       elevation: 0,
-      backgroundColor: theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
+      backgroundColor:
+          theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
       leading: IconButton(
         icon: Icon(
           Icons.menu,
@@ -171,7 +172,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   Widget _buildSearchBar() {
     final theme = Theme.of(context);
-    final hintColor = theme.textTheme.bodySmall?.color?.withOpacity(0.7) ?? theme.hintColor;
+    final hintColor =
+        theme.textTheme.bodySmall?.color?.withOpacity(0.7) ?? theme.hintColor;
     final borderColor = theme.dividerColor.withOpacity(0.4);
     final fillColor = theme.inputDecorationTheme.fillColor ?? theme.cardColor;
 
@@ -313,7 +315,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             .iconTheme
                             .color
                             ?.withOpacity(0.7)),
-
                   ],
                 ),
               ),
@@ -338,7 +339,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             .iconTheme
                             .color
                             ?.withOpacity(0.7)),
-
                   ],
                 ),
               ),
@@ -673,7 +673,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 const SizedBox(height: 8),
                 const Text(
                   "We make sure you get the offer you need at best prices",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500,color: Colors.black87),
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87),
                 ),
               ],
             ),
@@ -718,8 +721,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Container(
                 color: theme.dividerColor.withOpacity(0.2),
-                child: Icon(Icons.image_not_supported,
-                    color: theme.disabledColor),
+                child:
+                    Icon(Icons.image_not_supported, color: theme.disabledColor),
               ),
             ),
           ),
@@ -979,10 +982,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   size: 64, color: Theme.of(context).disabledColor),
               const SizedBox(height: 16),
               Text('Your wishlist is empty',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(fontSize: 16, color: Theme.of(context).disabledColor)),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 16, color: Theme.of(context).disabledColor)),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
@@ -1031,7 +1032,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         width: double.infinity,
                         height: double.infinity,
                         errorBuilder: (_, __, ___) => Container(
-                          color: Theme.of(context).dividerColor.withOpacity(0.3),
+                          color:
+                              Theme.of(context).dividerColor.withOpacity(0.3),
                           child: const Icon(Icons.image_not_supported),
                         ),
                       ),
@@ -1107,8 +1109,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   size: 64, color: theme.disabledColor),
               const SizedBox(height: 16),
               Text('Your cart is empty',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: 16, color: theme.disabledColor)),
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(fontSize: 16, color: theme.disabledColor)),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
@@ -1151,10 +1153,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Subtotal',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(fontSize: 14)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(fontSize: 14)),
                       Obx(() => Text(
                           '₹${cartController.subtotal.toStringAsFixed(2)}',
                           style: const TextStyle(fontSize: 14))),
@@ -1350,8 +1352,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 width: 80,
                 height: 80,
                 color: theme.dividerColor.withOpacity(0.2),
-                child: Icon(Icons.image_not_supported,
-                    color: theme.disabledColor),
+                child:
+                    Icon(Icons.image_not_supported, color: theme.disabledColor),
               ),
             ),
           ),
