@@ -50,38 +50,45 @@ class _ProductsScreenState extends State<ProductsScreen> {
         }
 
         return Obx(
-          () => SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Search Bar
-                _buildSearchBar(),
+          () {
+            if (_selectedNavIndex == 1) {
+              // Wishlist view
+              return _buildWishlistView();
+            }
 
-                /// Category Tabs
-                _buildCategoryTabs(),
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Search Bar
+                  _buildSearchBar(),
 
-                /// Sort & Filter
-                _buildSortFilterBar(),
+                  /// Category Tabs
+                  _buildCategoryTabs(),
 
-                /// Promotional Banner
-                _buildPromoBanner(),
+                  /// Sort & Filter
+                  _buildSortFilterBar(),
 
-                /// Featured Products
-                _buildFeaturedSection(),
+                  /// Promotional Banner
+                  _buildPromoBanner(),
 
-                /// Trending Products
-                _buildTrendingSection(),
+                  /// Featured Products
+                  _buildFeaturedSection(),
 
-                /// Special Offers
-                _buildSpecialOffersSection(),
+                  /// Trending Products
+                  _buildTrendingSection(),
 
-                /// New Arrivals
-                _buildNewArrivalsSection(),
+                  /// Special Offers
+                  _buildSpecialOffersSection(),
 
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
+                  /// New Arrivals
+                  _buildNewArrivalsSection(),
+
+                  const SizedBox(height: 20),
+                ],
+              ),
+            );
+          },
         );
       }),
       bottomNavigationBar: _buildBottomNavigation(),
@@ -128,7 +135,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
             child: const Icon(Icons.person, color: Colors.red, size: 20),
           ),
           onPressed: () {
-            // go to profile page
             Get.toNamed("/profile");
           },
         ),
@@ -843,9 +849,16 @@ class _ProductsScreenState extends State<ProductsScreen> {
       unselectedItemColor: Colors.grey[400],
       onTap: (index) {
         setState(() => _selectedNavIndex = index);
-        if (index == 3) {
-          // Settings
-          Get.toNamed("/login");
+
+        if (index == 1) {
+          // Wishlist
+          controller.fetchWishlist();
+        } else if (index == 2) {
+          // Cart
+          Get.toNamed("/place-order");
+        } else if (index == 3) {
+          // Settings (profile / account)
+          Get.toNamed("/profile");
         }
       },
       items: [
@@ -867,5 +880,131 @@ class _ProductsScreenState extends State<ProductsScreen> {
         ),
       ],
     );
+  }
+
+  Widget _buildWishlistView() {
+    return Obx(() {
+      if (controller.isWishlistLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (controller.wishlist.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
+              const SizedBox(height: 16),
+              const Text('Your wishlist is empty',
+                  style: TextStyle(fontSize: 16, color: Colors.grey)),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() => _selectedNavIndex = 0);
+                },
+                child: const Text('Continue Shopping'),
+              ),
+            ],
+          ),
+        );
+      }
+
+      return Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: GridView.builder(
+          itemCount: controller.wishlist.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.75,
+          ),
+          itemBuilder: (context, index) {
+            final product = controller.wishlist[index];
+            return GestureDetector(
+              onTap: () {
+                Get.to(() => ProductDetailScreen(product: product));
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        product.imageUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image_not_supported),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: IconButton(
+                        icon: const Icon(Icons.favorite, color: Colors.red),
+                        onPressed: () {
+                          controller.toggleWishlist(product.id!);
+                        },
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(12),
+                            bottomRight: Radius.circular(12),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '\$${product.price.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Color(0xFFFF6B6B),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    });
   }
 }

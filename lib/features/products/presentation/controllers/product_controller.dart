@@ -30,6 +30,9 @@ class ProductController extends GetxController {
     super.onInit();
   }
 
+  var wishlist = <Product>[].obs;
+  var isWishlistLoading = false.obs;
+
   Future<void> fetchProducts() async {
     try {
       isLoading.value = true;
@@ -45,6 +48,28 @@ class ProductController extends GetxController {
       print('Product fetch error: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchWishlist() async {
+    try {
+      isWishlistLoading.value = true;
+      final result = await _service.fetchWaitlist();
+      wishlist.assignAll(result);
+    } catch (e) {
+      print('Wishlist fetch error: $e');
+    } finally {
+      isWishlistLoading.value = false;
+    }
+  }
+
+  Future<void> toggleWishlist(int productId) async {
+    try {
+      await _service.toggleWaitlist(productId);
+      // Refresh wishlist after toggle
+      await fetchWishlist();
+    } catch (e) {
+      print('Toggle wishlist error: $e');
     }
   }
 

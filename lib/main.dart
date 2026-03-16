@@ -11,6 +11,7 @@ import 'features/auth/presentation/screens/profile_screen.dart';
 import 'features/products/presentation/screens/menu_screen.dart';
 import 'features/products/presentation/screens/product_detail_screen.dart';
 import 'features/products/presentation/screens/place_order_screen.dart';
+import 'features/products/presentation/screens/wishlist_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: "/splash",
+      initialRoute: "/products",
       getPages: [
         GetPage(
           name: "/splash",
@@ -54,6 +55,10 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: "/trending",
           page: () => const TrendingProductsScreen(),
+        ),
+        GetPage(
+          name: "/wishlist",
+          page: () => const WishlistScreen(),
         ),
         GetPage(
           name: "/profile",

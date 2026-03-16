@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../data/models/cart_item_model.dart';
 import '../../data/models/product_model.dart';
 import '../controllers/cart_controller.dart';
+import '../controllers/product_controller.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -47,6 +48,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           onPressed: () => Get.back(),
         ),
         actions: [
+          Obx(() {
+            final controller = Get.find<ProductController>();
+            final isInWishlist =
+                controller.wishlist.any((p) => p.id == widget.product.id);
+            return IconButton(
+              icon: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (child, animation) => ScaleTransition(
+                  scale: animation,
+                  child: child,
+                ),
+                child: Icon(
+                  isInWishlist ? Icons.favorite : Icons.favorite_border,
+                  key: ValueKey<bool>(isInWishlist),
+                  color: isInWishlist ? Colors.red : Colors.black87,
+                ),
+              ),
+              onPressed: () {
+                controller.toggleWishlist(widget.product.id!);
+              },
+            );
+          }),
           IconButton(
             icon: const Icon(Icons.shopping_cart, color: Colors.black87),
             onPressed: () {
