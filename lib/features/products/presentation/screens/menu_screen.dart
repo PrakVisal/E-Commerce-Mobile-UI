@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class MenuScreen extends StatelessWidget {
+  const MenuScreen({super.key});
+
+  static const _menuItems = [
+    "All",
+    "Beauty",
+    "Fashion",
+    "Kids",
+    "Mens",
+    "Womens",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Get.back(),
+        ),
+        title: const Text(
+          "Menu",
+          style: TextStyle(color: Colors.black87),
+        ),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          itemCount: _menuItems.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          itemBuilder: (context, index) {
+            final title = _menuItems[index];
+            return GestureDetector(
+              onTap: () {
+                // Close menu for now; you can add navigation logic here.
+                Get.back();
+              },
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

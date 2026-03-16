@@ -94,7 +94,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
       backgroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.menu, color: Colors.black87),
-        onPressed: () {},
+        onPressed: () {
+          Get.toNamed("/menu");
+        },
       ),
       title: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
