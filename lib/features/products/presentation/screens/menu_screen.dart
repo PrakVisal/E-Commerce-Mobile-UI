@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../controllers/product_controller.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
@@ -38,7 +39,8 @@ class MenuScreen extends StatelessWidget {
             final title = _menuItems[index];
             return GestureDetector(
               onTap: () {
-                // Close menu for now; you can add navigation logic here.
+                final controller = Get.find<ProductController>();
+                controller.selectCategory(title);
                 Get.back();
               },
               child: Text(
@@ -56,3 +58,4 @@ class MenuScreen extends StatelessWidget {
     );
   }
 }
+
