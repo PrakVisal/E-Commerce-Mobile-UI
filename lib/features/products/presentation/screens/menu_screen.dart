@@ -16,17 +16,24 @@ class MenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(
+            Icons.arrow_back,
+            color: theme.iconTheme.color ?? theme.colorScheme.onSurface,
+          ),
           onPressed: () => Get.back(),
         ),
-        title: const Text(
+        title: Text(
           "Menu",
-          style: TextStyle(color: Colors.black87),
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: theme.appBarTheme.titleTextStyle?.color ?? theme.colorScheme.onSurface,
+          ),
         ),
         centerTitle: true,
       ),
@@ -45,10 +52,10 @@ class MenuScreen extends StatelessWidget {
               },
               child: Text(
                 title,
-                style: const TextStyle(
+                style: theme.textTheme.headlineMedium?.copyWith(
                   fontSize: 34,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: theme.textTheme.headlineMedium?.color ?? theme.colorScheme.onSurface,
                 ),
               ),
             );

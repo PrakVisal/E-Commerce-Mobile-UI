@@ -10,14 +10,18 @@ class WishlistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ProductController>();
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wishlist'),
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(
+            Icons.arrow_back,
+            color: theme.iconTheme.color ?? theme.colorScheme.onSurface,
+          ),
           onPressed: () => Get.back(),
         ),
       ),
@@ -31,10 +35,19 @@ class WishlistScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
+                Icon(
+                  Icons.favorite_border,
+                  size: 64,
+                  color: theme.disabledColor,
+                ),
                 const SizedBox(height: 16),
-                const Text('Your wishlist is empty',
-                    style: TextStyle(fontSize: 16, color: Colors.grey)),
+                Text(
+                  'Your wishlist is empty',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 16,
+                    color: theme.disabledColor,
+                  ),
+                ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () => Get.back(),
@@ -56,7 +69,7 @@ class WishlistScreen extends StatelessWidget {
               childAspectRatio: 0.75,
             ),
             itemBuilder: (context, index) {
-              return _buildProductCard(controller.wishlist[index]);
+              return _buildProductCard(controller.wishlist[index], theme);
             },
           ),
         );
@@ -64,15 +77,16 @@ class WishlistScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProductCard(Product product) {
+  Widget _buildProductCard(Product product, ThemeData theme) {
     return GestureDetector(
       onTap: () => Get.to(() => ProductDetailScreen(product: product)),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
+          color: theme.cardColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: theme.shadowColor.withValues(alpha: 0.1),
               blurRadius: 12,
             ),
           ],
@@ -87,8 +101,11 @@ class WishlistScreen extends StatelessWidget {
                 width: double.infinity,
                 height: double.infinity,
                 errorBuilder: (_, __, ___) => Container(
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image_not_supported),
+                  color: theme.dividerColor.withValues(alpha: 0.2),
+                  child: Icon(
+                    Icons.image_not_supported,
+                    color: theme.disabledColor,
+                  ),
                 ),
               ),
             ),
@@ -110,7 +127,7 @@ class WishlistScreen extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(12),
                     bottomRight: Radius.circular(12),
@@ -123,18 +140,19 @@ class WishlistScreen extends StatelessWidget {
                       product.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '\$${product.price.toStringAsFixed(2)}',
-                      style: const TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
-                        color: Color(0xFFFF6B6B),
+                        color: const Color(0xFFFF6B6B),
                       ),
                     ),
                   ],
@@ -146,4 +164,5 @@ class WishlistScreen extends StatelessWidget {
       ),
     );
   }
+
 }
