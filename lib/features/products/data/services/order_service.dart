@@ -36,7 +36,7 @@ class OrderService {
 
   Future<List<OrderModel>> getOrders() async {
     try {
-      final response = await _dio.get('/api/v1/orders');
+      final response = await _dio.get('/api/v1/orders/me');
 
       if (response.statusCode == 200) {
         final List<dynamic> data =

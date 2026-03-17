@@ -115,7 +115,7 @@ class AuthService {
   }
 
   Future<void> signup(String email, String password,
-      {String? username, String? fullName}) async {
+      {String? username, String? fullName, String? confirmPassword}) async {
     try {
       print('Attempting signup for: $email');
 
@@ -124,6 +124,7 @@ class AuthService {
         data: {
           "email": email,
           "password": password,
+          "confirmPassword": confirmPassword ?? password,
           "username": username ?? email.split('@')[0],
           "fullName": fullName ?? username ?? email.split('@')[0],
         },

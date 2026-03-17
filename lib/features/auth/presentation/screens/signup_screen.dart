@@ -58,6 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
       emailController.text.trim(),
       passwordController.text.trim(),
       username: usernameController.text.trim(),
+      confirmPassword: confirmPasswordController.text.trim(),
     );
   }
 

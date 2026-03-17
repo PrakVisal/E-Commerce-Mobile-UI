@@ -30,7 +30,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> signup(String email, String password,
-      {String username = ''}) async {
+      {String username = '', String confirmPassword = ''}) async {
     try {
       isLoading.value = true;
 
@@ -38,6 +38,7 @@ class AuthController extends GetxController {
         email,
         password,
         username: username.isNotEmpty ? username : null,
+        confirmPassword: confirmPassword.isNotEmpty ? confirmPassword : null,
       );
 
       Get.snackbar(
