@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../data/models/product_model.dart';
+import '../../data/models/category_model.dart';
 import '../../data/services/product_service.dart';
 import '../../../../core/storage/token_storage.dart';
 
@@ -16,7 +18,10 @@ class ProductController extends GetxController {
   var selectedSort = "Popular".obs;
   var searchQuery = "".obs;
 
-  final categories = ["All", "Beauty", "Fashion", "Kids", "Mens", "Womens"];
+  final RxList<CategoryModel> categories = <CategoryModel>[
+    CategoryModel(value: "All", name: "All", iconData: Icons.category)
+  ].obs;
+
   final sortOptions = [
     "Popular",
     "Price: Low to High",
@@ -26,8 +31,16 @@ class ProductController extends GetxController {
 
   @override
   void onInit() {
+    _buildCategories();
     fetchProducts();
     super.onInit();
+  }
+
+  void _buildCategories() {
+    categories.value = [
+      CategoryModel(value: "All", name: "All", iconData: Icons.category),
+      ...ProductCategory.productCategories(),
+    ];
   }
 
   Future<void> fetchProducts() async {

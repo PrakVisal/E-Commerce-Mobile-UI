@@ -75,12 +75,14 @@ class AuthService {
         data = jsonDecode(data);
       }
 
-      // Navigate to where the user object is expected
+      // Handle various payload shapes from the backend
       Map<String, dynamic>? userJson;
       if (data is Map<String, dynamic>) {
-        userJson = data['payload']?['user'] ??
-            data['data']?['user'] ??
-            data['user'] ??
+        userJson = data['payload']?['user'] as Map<String, dynamic>? ??
+            data['payload'] as Map<String, dynamic>? ??
+            data['data']?['user'] as Map<String, dynamic>? ??
+            data['data'] as Map<String, dynamic>? ??
+            data['user'] as Map<String, dynamic>? ??
             data;
       }
 
@@ -98,8 +100,8 @@ class AuthService {
   /// Updates the user's profile with the provided [user] object.
   Future<void> updateProfile(User user) async {
     try {
-      final response = await _dio.put(
-        '/api/v1/auths/me',
+      final response = await _dio.patch(
+        '/api/v1/auths/profile',
         data: user.toJson(),
       );
 
@@ -112,7 +114,8 @@ class AuthService {
     }
   }
 
-  Future<void> signup(String email, String password, {String? fullName}) async {
+  Future<void> signup(String email, String password,
+      {String? username, String? fullName}) async {
     try {
       print('Attempting signup for: $email');
 
@@ -121,7 +124,8 @@ class AuthService {
         data: {
           "email": email,
           "password": password,
-          "fullName": fullName ?? email.split('@')[0],
+          "username": username ?? email.split('@')[0],
+          "fullName": fullName ?? username ?? email.split('@')[0],
         },
       );
 

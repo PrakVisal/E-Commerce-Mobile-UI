@@ -1,3 +1,4 @@
+import '../../../../core/network/file_service.dart';
 
 class Product {
   final int? id;
@@ -5,10 +6,8 @@ class Product {
   final String description;
   final double price;
   final String imageUrl;
-  final String sizeOptions;
   final bool onPromotion;
   final String? category;
-  final double? rating;
   final int? reviews;
   final double? discount;
 
@@ -18,10 +17,8 @@ class Product {
     required this.description,
     required this.price,
     required this.imageUrl,
-    required this.sizeOptions,
     required this.onPromotion,
     this.category,
-    this.rating,
     this.reviews,
     this.discount,
   });
@@ -32,14 +29,12 @@ class Product {
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
-      imageUrl: json['imageUrl'] ?? json['image_url'] ?? '',
-      sizeOptions: json['sizeOptions'] ?? json['size_options'] ?? '',
+      imageUrl:
+          FileService.getImageUrl(json['imageUrl'] ?? json['image_url'] ?? ''),
       onPromotion: json['onPromotion'] ?? json['on_promotion'] ?? false,
       category: json['category'],
-      rating: json['rating'] != null ? (json['rating']).toDouble() : null,
       reviews: json['reviews'],
       discount: json['discount'] != null ? (json['discount']).toDouble() : null,
     );
   }
 }
-

@@ -29,11 +29,16 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> signup(String email, String password) async {
+  Future<void> signup(String email, String password,
+      {String username = ''}) async {
     try {
       isLoading.value = true;
 
-      await _authService.signup(email, password);
+      await _authService.signup(
+        email,
+        password,
+        username: username.isNotEmpty ? username : null,
+      );
 
       Get.snackbar(
         "Success",

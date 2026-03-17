@@ -8,7 +8,7 @@ class DioClient {
     _dio ??= Dio(
       BaseOptions(
         baseUrl:
-            "http://152.42.176.150:8081", // Using IP address instead of domain
+            "http://localhost:9090", // Using IP address instead of domain
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         sendTimeout: const Duration(seconds: 30),

@@ -3,8 +3,18 @@ import '../../../../core/network/dio_client.dart';
 import '../models/product_model.dart';
 
 class ProductService {
-
   final Dio _dio = DioClient.dio;
+
+  Future<Product> updateDiscount(int id, double percentage) async {
+    try {
+      final response = await _dio.patch('/products/$id/discount', data: {
+        'discountPercentage': percentage,
+      });
+      return Product.fromJson(response.data['data']);
+    } catch (e) {
+      throw Exception('Failed to update discount: $e');
+    }
+  }
 
   Future<List<Product>> fetchProducts() async {
     try {
@@ -21,7 +31,6 @@ class ProductService {
       }
 
       return data.map((json) => Product.fromJson(json)).toList();
-
     } on DioException catch (e) {
       throw Exception("Network error: ${e.message}");
     }
