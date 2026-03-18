@@ -98,6 +98,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
               /// New Arrivals
               _buildNewArrivalsSection(),
+
+              /// All Products
+              _buildAllProductsSection(),
             ] else ...[
               /// Search/Filter Results
               _buildSearchResultsGrid(),
@@ -110,6 +113,39 @@ class _ProductsScreenState extends State<ProductsScreen> {
     });
   }
 
+  Widget _buildAllProductsSection() {
+    final results = controller.products;
+    if (results.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Text(
+            "All Products",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 6,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            mainAxisExtent: 220,
+          ),
+          itemCount: results.length,
+          itemBuilder: (context, index) {
+            return _buildProductGridCard(results[index]);
+          },
+        ),
+      ],
+    );
+  }
+
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       elevation: 0,
@@ -118,7 +154,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
         icon: const Icon(Icons.menu, color: Colors.black87),
         onPressed: () {},
       ),
-      
       centerTitle: true,
       actions: [
         // Cart icon with badge
