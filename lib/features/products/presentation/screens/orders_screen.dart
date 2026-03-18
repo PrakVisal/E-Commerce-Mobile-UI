@@ -113,14 +113,14 @@ class OrdersScreen extends StatelessWidget {
           itemBuilder: (context, index) => GestureDetector(
             onTap: () => Get.to(
                 () => OrderDetailScreen(order: controller.orders[index])),
-            child: _buildOrderCard(controller.orders[index]),
+            child: _buildOrderCard(context, controller.orders[index]),
           ),
         );
       }),
     );
   }
 
-  Widget _buildOrderCard(OrderModel order) {
+  Widget _buildOrderCard(BuildContext context, OrderModel order) {
     final statusColor = _statusColor(order.status);
     return Container(
       decoration: BoxDecoration(
@@ -199,18 +199,80 @@ class OrdersScreen extends StatelessWidget {
                       style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                     ),
                   const SizedBox(height: 8),
-                  Text(
-                    '\$${order.totalAmount.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFFF6B6B)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '\$${order.totalAmount.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFFF6B6B)),
+                      ),
+                      if (order.status.toUpperCase() != 'CANCELLED')
+                        TextButton.icon(
+                          onPressed: () => _confirmCancel(context, order),
+                          icon: const Icon(Icons.cancel_outlined,
+                              size: 16, color: Colors.red),
+                          label: const Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.red, fontSize: 13),
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        ),
+                    ],
                   ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmCancel(BuildContext context, OrderModel order) {
+    final OrderController controller = Get.find<OrderController>();
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Cancel Order'),
+        content: Text('Are you sure you want to cancel order #${order.id}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (order.id == null) return;
+              Get.back();
+              final success = await controller.cancelOrder(order.id!);
+              if (success) {
+                Get.snackbar(
+                  'Success',
+                  'Order cancelled successfully',
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
+              } else {
+                Get.snackbar(
+                  'Error',
+                  'Failed to cancel order: ${controller.errorMessage.value}',
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                );
+              }
+            },
+            child:
+                const Text('Yes, Cancel', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }
@@ -229,6 +291,7 @@ class OrdersScreen extends StatelessWidget {
   Color _statusColor(String status) {
     switch (status.toUpperCase()) {
       case 'CONFIRMED':
+      case 'PAID':
         return const Color(0xFF00C853);
       case 'SHIPPED':
         return Colors.blue;

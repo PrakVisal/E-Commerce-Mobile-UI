@@ -24,12 +24,20 @@ class OrderModel {
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
+    final productJson = json['product'] as Map<String, dynamic>?;
+
     return OrderModel(
       id: json['id'],
-      productId: json['productId'] ?? json['product_id'] ?? 0,
-      productName: json['productName'] ?? json['product_name'] ?? '',
-      productImageUrl:
-          json['productImageUrl'] ?? json['product_image_url'] ?? '',
+      productId:
+          json['productId'] ?? json['product_id'] ?? productJson?['id'] ?? 0,
+      productName: json['productName'] ??
+          json['product_name'] ??
+          productJson?['name'] ??
+          '',
+      productImageUrl: json['productImageUrl'] ??
+          json['product_image_url'] ??
+          productJson?['imageUrl'] ??
+          '',
       quantity: json['quantity'] ?? 1,
       totalAmount:
           (json['totalAmount'] ?? json['total_amount'] ?? 0).toDouble(),
@@ -44,4 +52,28 @@ class OrderModel {
         'quantity': quantity,
         'totalAmount': totalAmount,
       };
+
+  OrderModel copyWith({
+    int? id,
+    int? productId,
+    String? productName,
+    String? productImageUrl,
+    int? quantity,
+    double? totalAmount,
+    String? status,
+    String? createdAt,
+    String? qr,
+  }) {
+    return OrderModel(
+      id: id ?? this.id,
+      productId: productId ?? this.productId,
+      productName: productName ?? this.productName,
+      productImageUrl: productImageUrl ?? this.productImageUrl,
+      quantity: quantity ?? this.quantity,
+      totalAmount: totalAmount ?? this.totalAmount,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      qr: qr ?? this.qr,
+    );
+  }
 }

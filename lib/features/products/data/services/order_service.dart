@@ -68,4 +68,17 @@ class OrderService {
           e.response?.data?['message'] ?? e.message ?? 'Refresh failed');
     }
   }
+
+  Future<void> deleteOrder(int orderId) async {
+    try {
+      final response = await _dio.delete('/api/v1/orders/$orderId');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete order');
+      }
+    } on DioException catch (e) {
+      debugPrint('Delete order error: $e');
+      throw Exception(
+          e.response?.data?['message'] ?? e.message ?? 'Delete failed');
+    }
+  }
 }

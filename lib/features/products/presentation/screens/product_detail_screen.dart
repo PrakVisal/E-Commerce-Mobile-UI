@@ -128,7 +128,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: Row(
                 children: [
                   Text(
-                    '\$${p.price.toStringAsFixed(2)}',
+                    '\$${p.discountedPrice.toStringAsFixed(2)}',
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -137,7 +137,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   if (p.discount != null && p.discount! > 0) ...[
                     const SizedBox(width: 8),
                     Text(
-                      '\$${(p.price + p.discount!).toStringAsFixed(2)}',
+                      '\$${p.price.toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontSize: 14,
                         decoration: TextDecoration.lineThrough,
@@ -146,7 +146,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '${((p.discount! / (p.price + p.discount!)) * 100).toStringAsFixed(0)}% Off',
+                      '${p.discount!.toStringAsFixed(0)}% Off',
                       style: const TextStyle(
                           fontSize: 14,
                           color: Color(0xFFFF6B6B),
@@ -206,7 +206,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
             const SizedBox(height: 8),
 
-            // ── Total for this order ───────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -215,7 +214,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Text('Total',
                       style: TextStyle(fontSize: 15, color: Colors.grey[600])),
                   Text(
-                    '\$${(p.price * _quantity).toStringAsFixed(2)}',
+                    '\$${(p.discountedPrice * _quantity).toStringAsFixed(2)}',
                     style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -288,24 +287,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             const SizedBox(height: 24),
 
             // ── Delivery banner ────────────────────────────────────
-            Container(
-              width: double.infinity,
-              color: const Color(0xFFFFCDD2),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text('Delivery in',
-                      style: TextStyle(color: Colors.black54, fontSize: 12)),
-                  SizedBox(height: 4),
-                  Text('Within 1 Hour',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
+            
             const SizedBox(height: 32),
           ],
         ),
@@ -368,7 +350,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final order = await _orderController.placeOrderDirect(
       productId: p.id!,
       quantity: _quantity,
-      totalAmount: p.price * _quantity,
+      totalAmount: p.discountedPrice * _quantity,
       productName: p.name,
       productImageUrl: p.imageUrl,
     );
@@ -376,7 +358,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (order != null) {
       Get.to(() => OrderConfirmationScreen(
             order: order,
-            totalAmount: p.price * _quantity,
+            totalAmount: p.discountedPrice * _quantity,
           ));
     } else {
       Get.snackbar(

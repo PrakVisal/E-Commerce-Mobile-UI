@@ -15,7 +15,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final ProfileController _ctrl = Get.put(ProfileController());
   final AuthController _authCtrl = Get.put(AuthController());
 
-  final _usernameCtrl = TextEditingController();
   final _fullNameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   bool _editing = false;
@@ -35,14 +34,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _populateFields(User? u) {
     if (u == null) return;
-    _usernameCtrl.text = u.username ?? '';
     _fullNameCtrl.text = u.fullName ?? '';
     _emailCtrl.text = u.email;
   }
 
   @override
   void dispose() {
-    _usernameCtrl.dispose();
     _fullNameCtrl.dispose();
     _emailCtrl.dispose();
     super.dispose();
@@ -126,9 +123,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const Text('Personal Information',
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 16),
-                    _field('Username', _usernameCtrl,
-                        icon: Icons.alternate_email_rounded),
                     const SizedBox(height: 14),
                     _field('Full Name', _fullNameCtrl,
                         icon: Icons.person_outline),
@@ -320,9 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final updated = User(
       id: current.id,
       email: current.email, // can't change email
-      username: _usernameCtrl.text.trim().isNotEmpty
-          ? _usernameCtrl.text.trim()
-          : current.username,
+      username: current.username, // keep username as is
       fullName: _fullNameCtrl.text.trim().isNotEmpty
           ? _fullNameCtrl.text.trim()
           : current.fullName,

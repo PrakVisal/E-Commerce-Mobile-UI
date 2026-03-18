@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../data/models/order_model.dart';
 import '../../data/services/order_service.dart';
+import '../controllers/order_controller.dart';
 import '../widgets/order_qr_image.dart';
 
 class OrderDetailScreen extends StatefulWidget {
@@ -16,8 +17,11 @@ class OrderDetailScreen extends StatefulWidget {
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
   final OrderService _orderService = OrderService();
+  final OrderController _orderController = Get.isRegistered<OrderController>()
+      ? Get.find<OrderController>()
+      : Get.put(OrderController());
   late OrderModel _order;
-  bool _refreshing = false;
+  final RxBool _refreshing = false.obs;
 
   @override
   void initState() {
@@ -31,14 +35,64 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   Future<void> _refreshPaymentStatus() async {
     if (_order.id == null) return;
-    setState(() => _refreshing = true);
+    _refreshing.value = true;
     try {
       final updated = await _orderService.refreshPaymentStatus(_order.id!);
       if (mounted) setState(() => _order = updated);
     } catch (e) {
       debugPrint('Refresh payment status error: $e');
     } finally {
-      if (mounted) setState(() => _refreshing = false);
+      if (mounted) _refreshing.value = false;
+    }
+  }
+
+  Future<void> _cancelOrder() async {
+    if (_order.id == null) return;
+
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('Cancel Order'),
+        content: Text('Are you sure you want to cancel order #${_order.id}?'),
+        actions: [
+          TextButton(
+              onPressed: () => Get.back(result: false),
+              child: const Text('No')),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            child:
+                const Text('Yes, Cancel', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    _refreshing.value = true;
+    try {
+      final success = await _orderController.cancelOrder(_order.id!);
+      if (success) {
+        Get.back(); // Go back to orders screen which will refresh
+        Get.snackbar(
+          'Success',
+          'Order cancelled successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        throw Exception(_orderController.errorMessage.value);
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to cancel order: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      if (mounted) _refreshing.value = false;
     }
   }
 
@@ -59,24 +113,24 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               color: Colors.black87, fontWeight: FontWeight.bold),
         ),
         actions: [
-          if (_refreshing)
-            const Padding(
-              padding: EdgeInsets.only(right: 8),
-              child: Center(
-                child: SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Color(0xFFFF6B6B)),
-                ),
-              ),
-            )
-          else
-            IconButton(
-              icon: const Icon(Icons.refresh, color: Colors.black54, size: 20),
-              tooltip: 'Refresh payment status',
-              onPressed: _refreshPaymentStatus,
-            ),
+          Obx(() => (_refreshing.value || _orderController.isLoading.value)
+              ? const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Center(
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Color(0xFFFF6B6B)),
+                    ),
+                  ),
+                )
+              : IconButton(
+                  icon: const Icon(Icons.refresh,
+                      color: Colors.black54, size: 20),
+                  tooltip: 'Refresh payment status',
+                  onPressed: _refreshPaymentStatus,
+                )),
           _StatusBadge(status: _order.status),
           const SizedBox(width: 12),
         ],
@@ -149,8 +203,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      Icon(Icons.qr_code_2_rounded,
-                          color: Color(0xFFFF6B6B), size: 22),
+                      Icon(Icons.qr_code, color: Color(0xFFFF6B6B), size: 22),
                       SizedBox(width: 8),
                       Text('Scan to Pay',
                           style: TextStyle(
@@ -177,7 +230,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.qr_code_2,
+                              Icon(Icons.qr_code,
                                   size: 120, color: Colors.grey[300]),
                               const SizedBox(height: 8),
                               Text('QR not available',
@@ -224,6 +277,33 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               qrString: _order.qr ?? '',
               orderId: _order.id,
             ),
+            const SizedBox(height: 24),
+            Obx(() {
+              // Access Rx to avoid the GetX "improper use" error when status is CANCELLED
+              final _ = _orderController.isLoading.value;
+              if (_order.status.toUpperCase() == 'CANCELLED') {
+                return const SizedBox.shrink();
+              }
+              return SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed:
+                      (_refreshing.value || _orderController.isLoading.value)
+                          ? null
+                          : _cancelOrder,
+                  icon: const Icon(Icons.cancel_outlined, color: Colors.red),
+                  label: const Text('Cancel Order',
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold)),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: const BorderSide(color: Colors.red),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              );
+            }),
             const SizedBox(height: 32),
           ],
         ),
@@ -306,6 +386,7 @@ class _StatusBadge extends StatelessWidget {
   Color _color() {
     switch (status.toUpperCase()) {
       case 'CONFIRMED':
+      case 'PAID':
         return const Color(0xFF00C853);
       case 'SHIPPED':
         return Colors.blue;

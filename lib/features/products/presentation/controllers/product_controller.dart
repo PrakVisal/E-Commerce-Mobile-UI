@@ -9,14 +9,23 @@ class ProductController extends GetxController {
   final ProductService _service = ProductService();
 
   var isLoading = true.obs;
+  var isTrendingLoading = true.obs;
   var hasError = false.obs;
   var products = <Product>[].obs;
+  var trendingProducts = <Product>[].obs;
+  var discountedProducts = <Product>[].obs;
   var filteredProducts = <Product>[].obs;
+  var isDiscountLoading = true.obs;
   var errorMessage = "".obs;
 
   var selectedCategory = "All".obs;
   var selectedSort = "Popular".obs;
   var searchQuery = "".obs;
+
+  bool get isFiltering =>
+      searchQuery.value.isNotEmpty ||
+      selectedCategory.value != "All" ||
+      selectedSort.value != "Popular";
 
   final RxList<CategoryModel> categories = <CategoryModel>[
     CategoryModel(value: "All", name: "All", iconData: Icons.category)
@@ -33,6 +42,8 @@ class ProductController extends GetxController {
   void onInit() {
     _buildCategories();
     fetchProducts();
+    fetchTrendingProducts();
+    fetchDiscountedProducts();
     super.onInit();
   }
 
@@ -48,7 +59,27 @@ class ProductController extends GetxController {
       isLoading.value = true;
       hasError.value = false;
 
-      final result = await _service.fetchProducts();
+      String? sortPrice;
+      String? sortCreatedAt;
+
+      switch (selectedSort.value) {
+        case "Price: Low to High":
+          sortPrice = "asc";
+          break;
+        case "Price: High to Low":
+          sortPrice = "desc";
+          break;
+        case "Newest":
+          sortCreatedAt = "desc";
+          break;
+      }
+
+      final result = await _service.fetchProducts(
+        category: selectedCategory.value,
+        name: searchQuery.value,
+        sortPrice: sortPrice,
+        sortCreatedAt: sortCreatedAt,
+      );
       products.assignAll(result);
 
       applyFilters();
@@ -61,68 +92,59 @@ class ProductController extends GetxController {
     }
   }
 
+  Future<void> fetchTrendingProducts() async {
+    try {
+      isTrendingLoading.value = true;
+      final result = await _service.fetchProducts(trending: true);
+      trendingProducts.assignAll(result);
+    } catch (e) {
+      print('Trending fetch error: $e');
+    } finally {
+      isTrendingLoading.value = false;
+    }
+  }
+
+  Future<void> fetchDiscountedProducts() async {
+    try {
+      isDiscountLoading.value = true;
+      final result = await _service.fetchProducts(onPromotion: true);
+      discountedProducts.assignAll(result);
+    } catch (e) {
+      print('Discount fetch error: $e');
+    } finally {
+      isDiscountLoading.value = false;
+    }
+  }
+
   void applyFilters() {
-    List<Product> filtered = products;
-
-    // Filter by search query
-    if (searchQuery.value.isNotEmpty) {
-      filtered = filtered
-          .where((p) =>
-              p.name.toLowerCase().contains(searchQuery.value.toLowerCase()))
-          .toList();
-    }
-
-    // Filter by category
-    if (selectedCategory.value != "All") {
-      filtered = filtered
-          .where((p) =>
-              p.category?.toLowerCase() == selectedCategory.value.toLowerCase())
-          .toList();
-    }
-
-    // Apply sorting
-    switch (selectedSort.value) {
-      case "Price: Low to High":
-        filtered.sort((a, b) => a.price.compareTo(b.price));
-        break;
-      case "Price: High to Low":
-        filtered.sort((a, b) => b.price.compareTo(a.price));
-        break;
-      case "Newest":
-        filtered.sort((a, b) => (b.id ?? 0).compareTo(a.id ?? 0));
-        break;
-      case "Popular":
-      default:
-        // Keep original order from backend
-        break;
-    }
-
-    filteredProducts.assignAll(filtered);
+    // Backend already handles filtering and sorting, but we can keep local filtering for instant search results if needed.
+    // However, the task says to "use the getall endpoint properly", which implies relying on backend.
+    // For now, let's keep it simple and assignall from the fetch result.
+    filteredProducts.assignAll(products);
   }
 
   void updateSearchQuery(String query) {
     searchQuery.value = query;
-    applyFilters();
+    fetchProducts(); // Re-fetch from backend for search
   }
 
   void selectCategory(String category) {
     selectedCategory.value = category;
-    applyFilters();
+    fetchProducts(); // Re-fetch from backend for category
   }
 
   void selectSort(String sort) {
     selectedSort.value = sort;
-    applyFilters();
+    fetchProducts(); // Re-fetch from backend for sort
   }
 
-  List<Product> getFeaturedProducts() =>
-      filteredProducts.where((p) => p.onPromotion).toList().take(6).toList();
+  List<Product> getFeaturedProducts() => discountedProducts.toList();
 
-  List<Product> getTrendingProducts() => filteredProducts.take(3).toList();
+  List<Product> getTrending() => trendingProducts.take(3).toList();
 
   /// Returns the full list of trending products, used by the dedicated
   /// trending page when the user taps "View all".
-  List<Product> getAllTrendingProducts() => filteredProducts.toList();
+  List<Product> getAllTrendingProducts() => trendingProducts.toList();
 
   List<Product> getNewArrivals() => products.take(4).toList();
 

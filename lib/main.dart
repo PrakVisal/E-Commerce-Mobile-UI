@@ -7,15 +7,19 @@ import 'features/auth/presentation/screens/forgot_password_screen.dart';
 import 'features/auth/presentation/screens/get_started_screen.dart';
 import 'features/products/presentation/screens/products_screen.dart';
 import 'features/products/presentation/screens/trending_products_screen.dart';
+import 'features/products/presentation/screens/new_arrivals_products_screen.dart';
 import 'features/auth/presentation/screens/profile_screen.dart';
 import 'features/products/presentation/screens/product_detail_screen.dart';
 import 'features/products/presentation/screens/place_order_screen.dart';
+import 'features/products/data/models/product_model.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -51,12 +55,24 @@ class MyApp extends StatelessWidget {
           page: () => const TrendingProductsScreen(),
         ),
         GetPage(
+          name: "/new-arrivals",
+          page: () => const NewArrivalsProductsScreen(),
+        ),
+        GetPage(
           name: "/profile",
           page: () => const ProfileScreen(),
         ),
         GetPage(
           name: "/product-detail",
-          page: () => ProductDetailScreen(product: Get.arguments),
+          page: () {
+            final args = Get.arguments;
+            if (args is Product) {
+              return ProductDetailScreen(product: args);
+            }
+            return const Scaffold(
+              body: Center(child: Text("Product not found")),
+            );
+          },
         ),
         GetPage(
           name: "/place-order",

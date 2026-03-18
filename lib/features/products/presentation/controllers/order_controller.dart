@@ -69,4 +69,23 @@ class OrderController extends GetxController {
       isLoading(false);
     }
   }
+
+  Future<bool> cancelOrder(int orderId) async {
+    try {
+      isLoading(true);
+      errorMessage('');
+      await _orderService.deleteOrder(orderId);
+      final index = orders.indexWhere((o) => o.id == orderId);
+      if (index != -1) {
+        orders[index] = orders[index].copyWith(status: 'CANCELLED');
+      }
+      return true;
+    } catch (e) {
+      errorMessage(e.toString());
+      debugPrint('Cancel order error: $e');
+      return false;
+    } finally {
+      isLoading(false);
+    }
+  }
 }

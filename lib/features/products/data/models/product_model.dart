@@ -23,6 +23,11 @@ class Product {
     this.discount,
   });
 
+  double get discountedPrice {
+    if (discount == null || discount == 0) return price;
+    return price * (1 - (discount! / 100));
+  }
+
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'],
@@ -34,7 +39,11 @@ class Product {
       onPromotion: json['onPromotion'] ?? json['on_promotion'] ?? false,
       category: json['category'],
       reviews: json['reviews'],
-      discount: json['discount'] != null ? (json['discount']).toDouble() : null,
+      discount:
+          (json['discountPercentage'] ?? json['discount_percentage']) != null
+              ? (json['discountPercentage'] ?? json['discount_percentage'] ?? 0)
+                  .toDouble()
+              : null,
     );
   }
 }

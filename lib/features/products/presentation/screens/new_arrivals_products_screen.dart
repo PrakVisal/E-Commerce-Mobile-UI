@@ -6,8 +6,8 @@ import '../controllers/wishlist_controller.dart';
 import '../../data/models/product_model.dart';
 import 'product_detail_screen.dart';
 
-class TrendingProductsScreen extends StatelessWidget {
-  const TrendingProductsScreen({Key? key}) : super(key: key);
+class NewArrivalsProductsScreen extends StatelessWidget {
+  const NewArrivalsProductsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,23 +17,23 @@ class TrendingProductsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trending Products'),
+        title: const Text('New Arrivals'),
       ),
       body: Obx(() {
-        final trending = controller.getAllTrendingProducts();
+        final newArrivals = controller.getNewArrivals();
 
-        if (controller.isTrendingLoading.value && trending.isEmpty) {
+        if (controller.isTrendingLoading.value && newArrivals.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (trending.isEmpty) {
-          return const Center(child: Text('No trending products found'));
+        if (newArrivals.isEmpty) {
+          return const Center(child: Text('No new arrivals found'));
         }
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: GridView.builder(
-            itemCount: trending.length,
+            itemCount: newArrivals.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 6,
               mainAxisSpacing: 8,
@@ -42,9 +42,9 @@ class TrendingProductsScreen extends StatelessWidget {
             ),
             itemBuilder: (context, index) {
               return GestureDetector(
-                onTap: () =>
-                    Get.to(() => ProductDetailScreen(product: trending[index])),
-                child: _buildProductGridCard(trending[index]),
+                onTap: () => Get.to(
+                    () => ProductDetailScreen(product: newArrivals[index])),
+                child: _buildProductGridCard(newArrivals[index]),
               );
             },
           ),

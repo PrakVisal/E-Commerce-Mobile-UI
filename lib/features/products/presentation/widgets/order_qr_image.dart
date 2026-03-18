@@ -81,7 +81,7 @@ class _OrderQrImageState extends State<OrderQrImage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.qr_code_2,
+                Icon(Icons.qr_code,
                     size: widget.size * 0.4, color: Colors.grey[400]),
                 const SizedBox(height: 8),
                 Text(

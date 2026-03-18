@@ -85,12 +85,42 @@ class OrderConfirmationScreen extends StatelessWidget {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 16),
-                  _summaryRow(
-                      'Product',
-                      order.productName.isNotEmpty
-                          ? order.productName
-                          : 'Product #${order.productId}'),
-                  const SizedBox(height: 8),
+                  if (order.productImageUrl.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              order.productImageUrl,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                width: 60,
+                                height: 60,
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.image_not_supported,
+                                    size: 20),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              order.productName.isNotEmpty
+                                  ? order.productName
+                                  : 'Product #${order.productId}',
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w600),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   _summaryRow('Quantity', '${order.quantity}'),
                   const SizedBox(height: 8),
                   _summaryRow('Status', order.status),
